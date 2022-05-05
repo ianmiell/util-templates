@@ -1,31 +1,34 @@
 #!/usr/bin/env bash
 
-# From: https://betterdev.blog/minimal-safe-bash-script-template/
+# 'Forked' from, and hat-tip to: https://betterdev.blog/minimal-safe-bash-script-template/
 
-set -Eeuo pipefail
+set -o errexit
+set -o nounset
+set -o errtrace
+set -o pipefail
 
 cleanup() {
-  EXIT_CODE=$?  # This must be the first line of the cleanup
+  local exit_code=$?  # This must be the first line of the cleanup
   trap - SIGINT SIGTERM ERR EXIT
-  # script cleanup here
+  # Script cleanup here
 }
 trap cleanup SIGINT SIGTERM ERR EXIT
 
 script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  abs_script_dir=$(readlink -f ${script_dir})
+  abs_script_dir=$(readlink -f "${script_dir}")
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-  abs_script_dir=$(greadlink -f ${script_dir})
+  abs_script_dir=$(greadlink -f "${script_dir}")
 elif [[ "$OSTYPE" == "cygwin" ]]; then
-  abs_script_dir=$(readlink -f ${script_dir})
+  abs_script_dir=$(readlink -f "${script_dir}")
 elif [[ "$OSTYPE" == "msys" ]]; then
-  abs_script_dir=$(readlink -f ${script_dir})
+  abs_script_dir=$(readlink -f "${script_dir}")
 elif [[ "$OSTYPE" == "win32" ]]; then
-  abs_script_dir=$(readlink -f ${script_dir})
+  abs_script_dir=$(readlink -f "${script_dir}")
 elif [[ "$OSTYPE" == "freebsd"* ]]; then
-  abs_script_dir=$(readlink -f ${script_dir})
+  abs_script_dir=$(readlink -f "${script_dir}")
 else
-  abs_script_dir=$(readlink -f ${script_dir})
+  abs_script_dir=$(readlink -f "${script_dir}")
 fi
 
 usage() {
@@ -65,18 +68,19 @@ die() {
 }
 
 parse_params() {
-  # default values of variables set from params
-  flag=0
-  param=''
+  # Default values of variables set from params
+  FLAG=0
+  PARAM=''
 
   while :; do
     case "${1-}" in
     -h | --help) usage ;;
-    -v | --verbose) set -x ;;
+    -v | --verbose) set -o xtrace ;;
     --no-color) NO_COLOR=1 ;;
-    -f | --flag) flag=1 ;; # example flag
+    -f | --flag) FLAG=1 ;; # example flag
+    -f | --flag) FLAG=1 ;; # example flag
     -p | --param) # example named parameter
-      param="${2-}"
+      PARAM="${2-}"
       shift
       ;;
     -?*) die "Unknown option: $1" ;;
@@ -85,11 +89,11 @@ parse_params() {
     shift
   done
 
-  args=("$@")
+  ARGS=("$@")
 
-  # check required params and arguments
-  [[ -z "${param-}" ]] && usage && die "Missing required parameter: param"
-  [[ ${#args[@]} -eq 0 ]] && usage && die "Missing script arguments"
+  # Check required params and arguments
+  [[ -z "${PARAM-}" ]] && usage && die "Missing required parameter: param"
+  [[ ${#ARGS[@]} -eq 0 ]] && usage && die "Missing script arguments"
 
   return 0
 }
@@ -97,9 +101,9 @@ parse_params() {
 parse_params "$@"
 setup_colors
 
-# script logic here
+# Script logic here, or `source this_script.sh` in your script if you want to treat it as a library.
 
 msg "${RED}Read parameters:${NOFORMAT}"
-msg "- flag: ${flag}"
-msg "- param: ${param}"
-msg "- arguments: ${args[*]-}"
+msg "- flag: ${FLAG}"
+msg "- param: ${PARAM}"
+msg "- arguments: ${ARGS[*]-}"
