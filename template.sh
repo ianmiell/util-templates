@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # 'Forked' from, and hat-tip to: https://betterdev.blog/minimal-safe-bash-script-template/
+# Also original was a gist here: https://gist.github.com/m-radzikowski/53e0b39e9a59a1518990e76c2bff8038
 
 set -o errexit
 set -o nounset
