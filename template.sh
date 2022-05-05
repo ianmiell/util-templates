@@ -14,25 +14,28 @@ cleanup() {
 }
 trap cleanup SIGINT SIGTERM ERR EXIT
 
-script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+# Determine the directory this script is running in.
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+# Determine the absolute directory we are running in in case it's needed later.
+# TODO: Untested.
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  abs_script_dir=$(readlink -f "${script_dir}")
+  ABS_SCRIPT_DIR=$(readlink -f "${SCRIPT_DIR}")
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-  abs_script_dir=$(greadlink -f "${script_dir}")
+  ABS_SCRIPT_DIR=$(greadlink -f "${SCRIPT_DIR}")
 elif [[ "$OSTYPE" == "cygwin" ]]; then
-  abs_script_dir=$(readlink -f "${script_dir}")
+  ABS_SCRIPT_DIR=$(readlink -f "${SCRIPT_DIR}")
 elif [[ "$OSTYPE" == "msys" ]]; then
-  abs_script_dir=$(readlink -f "${script_dir}")
+  ABS_SCRIPT_DIR=$(readlink -f "${SCRIPT_DIR}")
 elif [[ "$OSTYPE" == "win32" ]]; then
-  abs_script_dir=$(readlink -f "${script_dir}")
+  ABS_SCRIPT_DIR=$(readlink -f "${SCRIPT_DIR}")
 elif [[ "$OSTYPE" == "freebsd"* ]]; then
-  abs_script_dir=$(readlink -f "${script_dir}")
+  ABS_SCRIPT_DIR=$(readlink -f "${SCRIPT_DIR}")
 else
-  abs_script_dir=$(readlink -f "${script_dir}")
+  ABS_SCRIPT_DIR=$(readlink -f "${SCRIPT_DIR}")
 fi
 
 usage() {
-  cat << EOF # remove the space between << and EOF, this is due to web plugin issue
+  cat <<EOF
 Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [-f] -p param_value arg1 [arg2...]
 
 Script description here.
