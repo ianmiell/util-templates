@@ -102,7 +102,6 @@ parse_params() {
     -v | --verbose) set -o xtrace ;;
     --no-color) NO_COLOR=1 ;;
     -f | --flag) FLAG=1 ;; # example flag
-    -f | --flag) FLAG=1 ;; # example flag
     -p | --param) # example named parameter
       PARAM="${2-}"
       shift
