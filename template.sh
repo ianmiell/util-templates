@@ -8,28 +8,48 @@ set -o nounset
 set -o errtrace
 set -o pipefail
 
-cleanup() {
+# Cleanups. We have different functions for different as traps can be called twice if one function handles all of them, causing problems if they are not idempotent.
+cleanup_exit() {
   local exit_code=$?  # This must be the first line of the cleanup
-  trap - SIGINT SIGTERM ERR EXIT
+  trap - EXIT
   # Script cleanup here
 }
-trap cleanup SIGINT SIGTERM ERR EXIT
+trap cleanup_exit EXIT
+
+cleanup_sigint() {
+  trap - INT
+  # Script cleanup here. We know the exit code (130)
+}
+trap cleanup_sigint INT
+
+cleanup_sigterm() {
+  trap - TERM
+  # Script cleanup here. We know the exit code (143)
+}
+trap cleanup_sigterm TERM
+
+cleanup_err() {
+  local exit_code=$?  # This must be the first line of the cleanup
+  trap - ERR
+  # Script cleanup here.
+}
+trap cleanup_err ERR
 
 # Determine the directory this script is running in.
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 # Determine the absolute directory we are running in in case it's needed later.
 # TODO: Untested.
-if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+if [[ ${OSTYPE} == linux-gnu* ]]; then
   ABS_SCRIPT_DIR=$(readlink -f "${SCRIPT_DIR}")
-elif [[ "$OSTYPE" == "darwin"* ]]; then
+elif [[ ${OSTYPE} == darwin* ]]; then
   ABS_SCRIPT_DIR=$(greadlink -f "${SCRIPT_DIR}")
-elif [[ "$OSTYPE" == "cygwin" ]]; then
+elif [[ ${OSTYPE} == cygwin ]]; then
   ABS_SCRIPT_DIR=$(readlink -f "${SCRIPT_DIR}")
-elif [[ "$OSTYPE" == "msys" ]]; then
+elif [[ ${OSTYPE} == msys ]]; then
   ABS_SCRIPT_DIR=$(readlink -f "${SCRIPT_DIR}")
-elif [[ "$OSTYPE" == "win32" ]]; then
+elif [[ ${OSTYPE} == win32 ]]; then
   ABS_SCRIPT_DIR=$(readlink -f "${SCRIPT_DIR}")
-elif [[ "$OSTYPE" == "freebsd"* ]]; then
+elif [[ ${OSTYPE} == freebsd* ]]; then
   ABS_SCRIPT_DIR=$(readlink -f "${SCRIPT_DIR}")
 else
   ABS_SCRIPT_DIR=$(readlink -f "${SCRIPT_DIR}")
@@ -96,8 +116,8 @@ parse_params() {
   ARGS=("$@")
 
   # Check required params and arguments
-  [[ -z "${PARAM-}" ]] && usage && die "Missing required parameter: param"
-  [[ ${#ARGS[@]} -eq 0 ]] && usage && die "Missing script arguments"
+  [ -z "${PARAM-}" ] && usage && die "Missing required parameter: param"
+  [ ${#ARGS[@]} -eq 0 ] && usage && die "Missing script arguments"
 
   return 0
 }
