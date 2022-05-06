@@ -3,11 +3,10 @@
 # 'Forked' from, and hat-tip to: https://betterdev.blog/minimal-safe-bash-script-template/
 # Also original was a gist here: https://gist.github.com/m-radzikowski/53e0b39e9a59a1518990e76c2bff8038
 
-set -o errexit
-set -o nounset
-set -o errtrace
-set -o pipefail
+# Set options
+set -o errexit -o nounset -o errtrace -o pipefail
 
+# Trap signals/exits
 cleanup() {
   EXIT_CODE=$?  # This must be the first line of the cleanup
   trap - SIGINT SIGTERM ERR EXIT
@@ -51,7 +50,6 @@ Available options:
 EOF
   exit
 }
-
 
 setup_colors() {
   if [[ -t 2 ]] && [[ -z "${NO_COLOR-}" ]] && [[ "${TERM-}" != "dumb" ]]; then
