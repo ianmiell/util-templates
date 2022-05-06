@@ -8,32 +8,13 @@ set -o nounset
 set -o errtrace
 set -o pipefail
 
-# Cleanups. We have different functions for different as traps can be called twice if one function handles all of them, causing problems if they are not idempotent.
-cleanup_exit() {
-  local exit_code=$?  # This must be the first line of the cleanup
-  trap - EXIT
-  # Script cleanup here
+cleanup() {
+  EXIT_CODE=$?  # This must be the first line of the cleanup
+  trap - SIGINT SIGTERM ERR EXIT
+  # Script cleanup here. Make sure cleanup is idempotent, as it could be called multiple time.
+  # If you want more fine-grained cleanup, separate the traps and the functions.
 }
-trap cleanup_exit EXIT
-
-cleanup_sigint() {
-  trap - INT
-  # Script cleanup here. We know the exit code (130)
-}
-trap cleanup_sigint INT
-
-cleanup_sigterm() {
-  trap - TERM
-  # Script cleanup here. We know the exit code (143)
-}
-trap cleanup_sigterm TERM
-
-cleanup_err() {
-  local exit_code=$?  # This must be the first line of the cleanup
-  trap - ERR
-  # Script cleanup here.
-}
-trap cleanup_err ERR
+trap cleanup SIGINT SIGTERM ERR EXIT
 
 # Determine the directory this script is running in.
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
