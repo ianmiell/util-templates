@@ -37,7 +37,7 @@ fi
 
 usage() {
   cat <<EOF
-Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [-f] -p param_value arg1 [arg2...]
+Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [-f] [--no-color] -p param_value arg1 [arg2...]
 
 Script description here.
 
@@ -45,6 +45,7 @@ Available options:
 
 -h, --help      Print this help and exit
 -v, --verbose   Print script debug info
+--no-color      Switch off colorization
 -f, --flag      Some flag description
 -p, --param     Some param description
 EOF
