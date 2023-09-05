@@ -1,0 +1,58 @@
+digraph G {
+    // Global attributes
+    graph [bgcolor=lightgray];
+    node [shape=box, style=filled, fillcolor=lightblue, fontname="Arial", fontsize=10];
+    edge [color=darkgreen];
+
+    // Nodes
+    A [label="Node A"];
+    B [shape=ellipse, fillcolor=lightgreen, label="Node B"];
+    C [shape=diamond, fillcolor=lightyellow, label="Node C"];
+    D [shape=record, fillcolor=lightpink, label="{Node D|Record Shape}"];
+
+    // Edges
+    A -> B [label="Edge 1"];
+    A -> C [style=dotted, label="Edge 2"];
+    B -> C [color=red, label="Edge 3"];
+    C -> D [dir=back, label="Reversed Edge"];
+
+    // Subgraph
+    subgraph clusterSubgraph {
+        label="Subgraph";
+        rankdir=LR;
+        style=dashed;
+        color=blue;
+        E [label="Node E"];
+        F [label="Node F"];
+        E -> F;
+    }
+
+    // HTML-like labels
+    G [label=<<B>HTML</B> <FONT POINT-SIZE="12">Label</FONT>>];
+
+    // Clusters
+    subgraph clusterCluster1 {
+        label="Cluster 1";
+        color=orange;
+        H;
+        I;
+        H -> I;
+    }
+
+    subgraph clusterCluster2 {
+        label="Cluster 2";
+        color=purple;
+        J;
+        K;
+        J -> K;
+    }
+
+    // Invisible nodes and edges
+    {rank=same; L [style=invisible]; M [style=invisible];}
+    L -> M [style=invis];
+
+    // Styles
+    edge [style=dotted, color=gray];
+    node [style=rounded, shape=box];
+    A -> M;
+}
