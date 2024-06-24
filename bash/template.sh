@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# From: https://github.com/ianmiell/util-templates/blob/main/bash/template.sh
 # 'Forked' from, and hat-tip to: https://betterdev.blog/minimal-safe-bash-script-template/
 # Also original was a gist here: https://gist.github.com/m-radzikowski/53e0b39e9a59a1518990e76c2bff8038
 
@@ -53,10 +54,12 @@ EOF
 }
 
 setup_colors() {
+  # Use like so:
+  # echo -e "This is ${RED}red${NOFORMAT}, this is ${GREEN}green${NOFORMAT}"
   if [[ -t 2 ]] && [[ -z "${NO_COLOR-}" ]] && [[ "${TERM-}" != "dumb" ]]; then
-    NOFORMAT='\033[0m' RED='\033[0;31m' GREEN='\033[0;32m' ORANGE='\033[0;33m' BLUE='\033[0;34m' PURPLE='\033[0;35m' CYAN='\033[0;36m' YELLOW='\033[1;33m'
+    NOFORMAT='\033[0m' RED='\033[0;31m' GREEN='\033[0;32m' ORANGE='\033[0;33m' BLUE='\033[0;34m' PURPLE='\033[0;35m' CYAN='\033[0;36m' YELLOW='\033[1;33m' INVERSE='\033[7m' RESET_INVERSE='\033[27m'
   else
-    NOFORMAT='' RED='' GREEN='' ORANGE='' BLUE='' PURPLE='' CYAN='' YELLOW=''
+    NOFORMAT='' RED='' GREEN='' ORANGE='' BLUE='' PURPLE='' CYAN='' YELLOW='' INVERSE='' RESET_INVERSE=''
   fi
 }
 
@@ -94,9 +97,9 @@ parse_params() {
 
   ARGS=("$@")
 
-  # Check required params and arguments
-  [ -z "${PARAM-}" ] && usage && die "Missing required parameter: param"
-  [ ${#ARGS[@]} -eq 0 ] && usage && die "Missing script arguments"
+  # Check required params and arguments (uncomment if needed)
+  #[ -z "${PARAM-}" ] && usage && die "Missing required parameter: param"
+  #[ ${#ARGS[@]} -eq 0 ] && usage && die "Missing script arguments"
 
   return 0
 }
